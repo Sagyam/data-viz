@@ -2,8 +2,33 @@ import {
   DatasetWithCord,
   DatasetWithLabel1D,
   DatasetWithLabel2D,
+  DatasetWithNoLabel,
 } from '@/entities/dataset.entities'
 import { faker } from '@faker-js/faker'
+
+export function generateDatasetWithNoLabel(
+  numDatasets: number,
+  arraySize: number
+): DatasetWithNoLabel[] {
+  const datasets: DatasetWithNoLabel[] = []
+
+  for (let i = 0; i < numDatasets; i++) {
+    const dataItem: number[] = Array.from({ length: arraySize }, () =>
+      faker.number.int({ min: 0, max: 100 })
+    )
+
+    const dataset: DatasetWithNoLabel = {
+      id: faker.string.uuid(),
+      datasetName: `Dataset ${i + 1}`,
+      data: dataItem,
+      type: 'noLabel',
+      createdAt: faker.date.past().toISOString(),
+      updatedAt: faker.date.recent().toISOString(),
+    }
+    datasets.push(dataset)
+  }
+  return datasets
+}
 
 export function generateDatasetWithLabel1D(
   numDatasets: number,
@@ -20,7 +45,7 @@ export function generateDatasetWithLabel1D(
 
     const dataset: DatasetWithLabel1D = {
       id: faker.string.uuid(),
-      datasetName: `dataset${i + 1}`,
+      datasetName: `Dataset ${i + 1}`,
       labels: labels,
       data: dataItem.map(item => item[1]),
       type: 'label1D',
@@ -50,7 +75,7 @@ export function generateDatasetWithLabel2D(
 
     const dataset: DatasetWithLabel2D = {
       id: faker.string.uuid(),
-      datasetName: faker.lorem.word(3),
+      datasetName: `Dataset ${i + 1}`,
       dataItem,
       dataXName: faker.word.noun(1),
       dataYName: faker.word.noun(1),
@@ -82,7 +107,7 @@ export function generateDatasetCord(
 
     const dataset: DatasetWithCord = {
       id: faker.string.uuid(),
-      datasetName: faker.word.noun(3),
+      datasetName: `Dataset ${i + 1}`,
       dataItem,
       type: 'cord',
       createdAt: faker.date.past().toISOString(),

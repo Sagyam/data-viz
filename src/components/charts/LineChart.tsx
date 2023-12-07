@@ -1,7 +1,9 @@
 import EChartsWrapper from '@/components/EChartWrapper'
-import { useDatasetStore } from '@/stores/data-store'
+import { LineChartDataset } from '@/entities/linechart.dataset'
+import { useLineChartDatasetStore } from '@/stores/line-chart.store'
+import { generateLineChartDataset } from '@/utils/seeder/linechart'
 import * as echarts from 'echarts'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 interface seriesI {
   name: string
@@ -11,34 +13,49 @@ interface seriesI {
   data: number[]
 }
 
-const getSeries = (datasets: any[]): seriesI[] => {
+const getSeries = (datasets: LineChartDataset[]): seriesI[] => {
   return datasets.map(d => ({
     name: d.datasetName,
     type: 'line',
     stack: 'total',
     smooth: true,
-    data: d.data,
+    data: d.dataItem.map(item => item.data),
   }))
 }
 
-export const LineChart: React.FC = () => {
-  const { getAllDatasetsWithLabel1D } = useDatasetStore()
-  const datasets = getAllDatasetsWithLabel1D()
-  const allDatasetNames = datasets.map(d => d.datasetName)
+const getAllLabels = (datasets: LineChartDataset[]): string[] => {
+  const labels: string[] = []
+  datasets.forEach(d => {
+    d.dataItem.forEach(item => {
+      if (!labels.includes(item.label)) {
+        labels.push(item.label)
+      }
+    })
+  })
+  return labels
+}
 
-  if (datasets.length === 0) {
-    return null
+export const LineChart: React.FC = () => {
+  const { lineChartDataset, setLineChartDataset } = useLineChartDatasetStore()
+  const datasetNames = lineChartDataset.map(d => d.datasetName)
+
+  useEffect(() => {
+    setLineChartDataset(generateLineChartDataset(3, 10))
+  }, [])
+
+  if (lineChartDataset.length === 0) {
+    return <div>No data</div>
   }
 
   const chartOption: echarts.EChartsOption = {
     title: {
-      text: 'Stacked Line',
+      text: 'Stacked Line Chart',
     },
     tooltip: {
       trigger: 'axis',
     },
     legend: {
-      data: allDatasetNames,
+      data: datasetNames,
     },
     grid: {
       left: '3%',
@@ -54,12 +71,12 @@ export const LineChart: React.FC = () => {
     xAxis: {
       type: 'category',
       boundaryGap: false,
-      data: datasets[0].labels,
+      data: getAllLabels(lineChartDataset),
     },
     yAxis: {
       type: 'value',
     },
-    series: getSeries(datasets),
+    series: getSeries(lineChartDataset) as any,
   }
 
   return <EChartsWrapper option={chartOption} style={{ height: '500px' }} />

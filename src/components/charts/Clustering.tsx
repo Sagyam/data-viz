@@ -1,10 +1,17 @@
 import EChartsWrapper from '@/components/EChartWrapper'
+import { useClusteringDatasetStore } from '@/stores/custering.store'
 import * as echarts from 'echarts'
 import { transform } from 'echarts-stat'
 import React from 'react'
 
 export const Clustering: React.FC = () => {
   echarts.registerTransform(transform.clustering)
+
+  const { clusteringDataset } = useClusteringDatasetStore()
+
+  if (clusteringDataset.length === 0) {
+    return <div>No data</div>
+  }
 
   const data = [
     [3.275154, 2.957587],
@@ -87,7 +94,6 @@ export const Clustering: React.FC = () => {
       color: COLOR_ALL[i],
     })
   }
-
   const chartOption: echarts.EChartsOption = {
     dataset: [
       {

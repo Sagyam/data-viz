@@ -1,3 +1,12 @@
+export interface DatasetWithNoLabel {
+  id: string
+  datasetName: string
+  data: number[]
+  type: string
+  createdAt: string
+  updatedAt: string
+}
+
 export interface DatasetWithLabel1D {
   id: string
   datasetName: string

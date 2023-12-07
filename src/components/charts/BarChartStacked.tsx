@@ -14,7 +14,7 @@ export const BarChartStacked: React.FC = () => {
 
   const chartOption: echarts.EChartsOption = {
     title: {
-      text: 'Bar Animation Delay',
+      text: 'Bar Chart',
       left: 'center',
     },
     legend: {
