@@ -1,42 +1,96 @@
-import {Dataset} from "@/entities/dataset.entities";
-import {getRandomColorArray} from "@/lib/random-color";
-const getRand = (min: number, max: number): number => {
-    return Math.floor(Math.random() * (max - min + 1) + min);
-}
+import {
+  DatasetWithCord,
+  DatasetWithLabel1D,
+  DatasetWithLabel2D,
+} from '@/entities/dataset.entities'
+import { faker } from '@faker-js/faker'
 
-const getRandDate = (): string => {
-    const year = getRand(2010, 2020);
-    const month = getRand(1, 12);
-    const day = getRand(1, 28);
-    return `${year}-${month}-${day}`;
-}
+export function generateDatasetWithLabel1D(
+  numDatasets: number,
+  arraySize: number
+): DatasetWithLabel1D[] {
+  const datasets: DatasetWithLabel1D[] = []
 
-const getRandLabels = (count: number): string[] => {
-    const labels = [];
-    for (let i = 0; i < count; i++) {
-        labels.push(`Label ${i}`);
+  for (let i = 0; i < numDatasets; i++) {
+    const labels = Array.from({ length: arraySize }, (_, i) => `label${i + 1}`)
+    const dataItem: [string, number][] = Array.from(
+      { length: arraySize },
+      (_, i) => [labels[i], faker.number.int({ min: 0, max: 100 })]
+    )
+
+    const dataset: DatasetWithLabel1D = {
+      id: faker.string.uuid(),
+      datasetName: `dataset${i + 1}`,
+      labels: labels,
+      data: dataItem.map(item => item[1]),
+      type: 'label1D',
+      createdAt: faker.date.past().toISOString(),
+      updatedAt: faker.date.recent().toISOString(),
     }
-    return labels;
+    datasets.push(dataset)
+  }
+  return datasets
 }
 
-const getRandData = (count: number): number[] => {
-    const data = [];
-    for (let i = 0; i < count; i++) {
-        data.push(getRand(1, 100));
+export function generateDatasetWithLabel2D(
+  numDatasets: number,
+  arraySize: number
+): DatasetWithLabel2D[] {
+  const datasets: DatasetWithLabel2D[] = []
+
+  for (let i = 0; i < numDatasets; i++) {
+    const dataItem: [string, number, number][] = Array.from(
+      { length: arraySize },
+      () => [
+        faker.word.noun(1),
+        faker.number.int({ min: 0, max: 100 }),
+        faker.number.int({ min: 0, max: 100 }),
+      ]
+    )
+
+    const dataset: DatasetWithLabel2D = {
+      id: faker.string.uuid(),
+      datasetName: faker.lorem.word(3),
+      dataItem,
+      dataXName: faker.word.noun(1),
+      dataYName: faker.word.noun(1),
+      type: 'label2D',
+      createdAt: faker.date.past().toISOString(),
+      updatedAt: faker.date.recent().toISOString(),
     }
-    return data;
+
+    datasets.push(dataset)
+  }
+
+  return datasets
 }
 
-export const getRandomDataset = (count=5): Dataset => {
-    return {
-        id: getRand(1000, 9000).toString(),
-        name: `Dataset ${getRand(1, 100)}`,
-        labels: getRandLabels(count),
-        data: getRandData(count),
-        backgroundColors: getRandomColorArray(0.3, count),
-        borderColors: getRandomColorArray(1, count),
-        count: count,
-        createdAt: getRandDate(),
-        updatedAt: getRandDate(),
-    };
-};
+export function generateDatasetCord(
+  numDatasets: number,
+  arraySize: number
+): DatasetWithCord[] {
+  const datasets: DatasetWithCord[] = []
+
+  for (let i = 0; i < numDatasets; i++) {
+    const dataItem: [number, number][] = Array.from(
+      { length: arraySize },
+      () => [
+        faker.number.int({ min: 0, max: 100 }),
+        faker.number.int({ min: 0, max: 100 }),
+      ]
+    )
+
+    const dataset: DatasetWithCord = {
+      id: faker.string.uuid(),
+      datasetName: faker.word.noun(3),
+      dataItem,
+      type: 'cord',
+      createdAt: faker.date.past().toISOString(),
+      updatedAt: faker.date.recent().toISOString(),
+    }
+
+    datasets.push(dataset)
+  }
+
+  return datasets
+}
