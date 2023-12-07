@@ -1,33 +1,25 @@
 import EChartsWrapper from '@/components/EChartWrapper'
+import { useRegressionDatasetStore } from '@/stores/regression.store'
+import { generateRegressionDataset } from '@/utils/seeder/regression'
 import * as echarts from 'echarts'
 import { transform } from 'echarts-stat'
-import React from 'react'
+import React, { useEffect } from 'react'
 
-export const PolyRegression: React.FC = () => {
+export const LinearRegression: React.FC = () => {
   echarts.registerTransform(transform.regression)
 
-  const data = [
-    [73.18, 29.42],
-    [14.57, 66.83],
-    [41.29, 50.07],
-    [88.54, 5.12],
-    [62.76, 33.91],
-    [19.08, 77.65],
-    [55.92, 42.36],
-    [10.47, 91.24],
-    [36.75, 58.09],
-    [84.61, 12.88],
-    [27.33, 68.74],
-    [49.16, 45.53],
-    [95.07, 3.26],
-    [70.49, 24.67],
-    [17.81, 80.02],
-    [44.53, 37.81],
-    [9.19, 93.36],
-    [31.01, 63.2],
-    [77.45, 20.15],
-    [54.62, 53.08],
-  ]
+  const { regressionDataset, setRegressionDataset } =
+    useRegressionDatasetStore()
+
+  useEffect(() => {
+    setRegressionDataset(generateRegressionDataset(20))
+  }, [])
+
+  if (!regressionDataset) {
+    return <div>No data</div>
+  }
+
+  const data = regressionDataset.dataItem
 
   const chartOption: echarts.EChartsOption = {
     dataset: [
@@ -42,7 +34,7 @@ export const PolyRegression: React.FC = () => {
       },
     ],
     title: {
-      text: 'Polynomical Regression',
+      text: 'Linear Regression',
       left: 'center',
       top: 16,
     },

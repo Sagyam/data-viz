@@ -5,9 +5,9 @@ import { BarChart } from '@/components/charts/BarChart'
 import { BarChartStacked } from '@/components/charts/BarChartStacked'
 import { BoxPlot } from '@/components/charts/BoxPlot'
 import { Clustering } from '@/components/charts/Clustering'
+import { LinearRegression } from '@/components/charts/LinearRegression'
 import { LineChart } from '@/components/charts/LineChart'
 import { PieChart } from '@/components/charts/PieChart'
-import { PolyRegression } from '@/components/charts/PolyRegression'
 import { ThemeSwitch } from '@/components/ThemeSwitch'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import React from 'react'
@@ -54,7 +54,7 @@ const HomePage: React.FC = () => {
           <Clustering />
         </TabsContent>
         <TabsContent value="regression">
-          <PolyRegression />
+          <LinearRegression />
         </TabsContent>
       </Tabs>
     </main>
