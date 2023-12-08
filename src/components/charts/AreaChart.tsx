@@ -1,21 +1,22 @@
 import EChartsWrapper from '@/components/EChartWrapper'
+import { useAreaChartDatasetStore } from '@/stores/area-chart.store'
+import { generateAreaChart } from '@/utils/seeder/areachart'
 import * as echarts from 'echarts'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 export const AreaChart: React.FC = () => {
-  let base = +new Date(1968, 9, 3)
-  let oneDay = 24 * 3600 * 1000
-  let date = []
+  const { areaChartDataset, setAreaChartDataset } = useAreaChartDatasetStore()
 
-  let data = [Math.random() * 300]
+  useEffect(() => {
+    setAreaChartDataset(generateAreaChart(500))
+  }, [])
 
-  for (let i = 1; i < 100; i++) {
-    const now = new Date((base += oneDay))
-    date.push([now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'))
-    data.push(Math.round((Math.random() - 0.5) * 20 + data[i - 1]))
+  if (!areaChartDataset) {
+    return <div>No data</div>
   }
 
   const chartOption: echarts.EChartsOption = {
+    showLoading: 'default',
     tooltip: {
       trigger: 'axis',
       position: function (pt) {
@@ -24,7 +25,7 @@ export const AreaChart: React.FC = () => {
     },
     title: {
       left: 'center',
-      text: 'Large Area Chart',
+      text: 'Area Chart',
     },
     toolbox: {
       feature: {
@@ -38,7 +39,7 @@ export const AreaChart: React.FC = () => {
     xAxis: {
       type: 'category',
       boundaryGap: false,
-      data: date,
+      data: areaChartDataset.dateArray,
     },
     yAxis: {
       type: 'value',
@@ -57,7 +58,7 @@ export const AreaChart: React.FC = () => {
     ],
     series: [
       {
-        name: 'Fake Data',
+        name: areaChartDataset.datasetName,
         type: 'line',
         symbol: 'none',
         sampling: 'lttb',
@@ -76,7 +77,7 @@ export const AreaChart: React.FC = () => {
             },
           ]),
         },
-        data: data,
+        data: areaChartDataset.dataArray,
       },
     ],
   }

@@ -1,5 +1,5 @@
 import { BoxplotDataset } from '@/entities/boxplot.dataset'
-import create from 'zustand'
+import { create } from 'zustand'
 
 interface BoxplotDatasetStore {
   boxplotDataset: BoxplotDataset[]

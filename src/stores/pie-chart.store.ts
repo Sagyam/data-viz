@@ -1,5 +1,5 @@
 import { PieChartDataset } from '@/entities/piechart.dataset'
-import create from 'zustand'
+import { create } from 'zustand'
 
 interface PieChartDatasetStore {
   pieChartDataset: PieChartDataset | null

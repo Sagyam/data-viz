@@ -23,7 +23,6 @@ const EChartsWrapper: React.FC<EChartsWrapperProps> = ({
       const chart = echarts.init(chartRef.current, theme ?? 'light')
       chart.setOption(option)
 
-      // Cleanup the chart when the component is unmounted
       return () => {
         chart.dispose()
       }

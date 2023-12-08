@@ -1,5 +1,5 @@
 import { LineChartDataset } from '@/entities/linechart.dataset'
-import create from 'zustand'
+import { create } from 'zustand'
 
 interface LineChartDatasetStore {
   lineChartDataset: LineChartDataset[]

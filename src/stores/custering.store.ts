@@ -1,5 +1,5 @@
 import { ClusteringDataset } from '@/entities/clustering.dataset'
-import create from 'zustand'
+import { create } from 'zustand'
 
 interface ClusteringDatasetStore {
   clusteringDataset: ClusteringDataset | null

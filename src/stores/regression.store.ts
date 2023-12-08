@@ -1,5 +1,5 @@
 import { RegressionDataset } from '@/entities/regression.dataset'
-import create from 'zustand'
+import { create } from 'zustand'
 
 interface RegressionDatasetStore {
   regressionDataset: RegressionDataset | null

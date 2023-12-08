@@ -1,11 +1,9 @@
-type DataItem = [string, number, number]
-type Titles = [string, string, string]
+type DataItem = [number, number, string]
 
 export interface BarchartDataset {
   id: string
   datasetName: string
   dataItem: DataItem[]
-  title: Titles
   createdAt: string
   updatedAt: string
 }

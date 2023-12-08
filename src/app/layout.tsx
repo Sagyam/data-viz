@@ -16,7 +16,7 @@ const fontSans = FontSans({
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <head>
         <title>Dashboard</title>
       </head>
