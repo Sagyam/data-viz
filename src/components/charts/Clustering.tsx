@@ -2,6 +2,7 @@ import EChartsWrapper from '@/components/EChartWrapper'
 import { useClusteringDatasetStore } from '@/stores/custering.store'
 import { generateClusteringDataset } from '@/utils/seeder/clustering'
 import * as echarts from 'echarts'
+// @ts-ignore
 import { transform } from 'echarts-stat'
 import React, { useEffect } from 'react'
 

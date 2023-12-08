@@ -2,6 +2,7 @@ import EChartsWrapper from '@/components/EChartWrapper'
 import { useRegressionDatasetStore } from '@/stores/regression.store'
 import { generateRegressionDataset } from '@/utils/seeder/regression'
 import * as echarts from 'echarts'
+// @ts-ignore
 import { transform } from 'echarts-stat'
 import React, { useEffect } from 'react'
 
