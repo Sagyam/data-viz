@@ -17,15 +17,15 @@ const fontSans = FontSans({
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
-      <head>
-        <title>Dashboard</title>
-      </head>
       <ThemeProvider
         attribute="class"
         defaultTheme="system"
         enableSystem
         disableTransitionOnChange
       >
+        <head>
+          <title>Dashboard</title>
+        </head>
         <body
           className={cn(
             'min-h-screen bg-background font-sans antialiased',
