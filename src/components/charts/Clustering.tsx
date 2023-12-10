@@ -1,3 +1,5 @@
+'use client'
+
 import EChartsWrapper from '@/components/EChartWrapper'
 import { useClusteringDatasetStore } from '@/stores/custering.store'
 import { generateClusteringDataset } from '@/utils/seeder/clustering'

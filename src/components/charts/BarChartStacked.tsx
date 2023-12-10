@@ -1,3 +1,5 @@
+'use client'
+
 import EChartsWrapper from '@/components/EChartWrapper'
 import * as echarts from 'echarts'
 import React from 'react'

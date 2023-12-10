@@ -1,13 +1,16 @@
-import { DatasetTable } from '@/components/DataTable'
+import { DatasetSelector } from '@/components/DatasetSelector'
+import { ModeSwitcher } from '@/components/ModeSwitcher'
 import { ThemeSwitch } from '@/components/ThemeSwitch'
 import React from 'react'
 
 const HomePage: React.FC = () => {
   return (
-    <main className="flex flex-col items-center justify-center gap-y-8 py-16 px-32">
-      <ThemeSwitch />
-      {/* <ModeSwitcher /> */}
-      <DatasetTable />
+    <main className="max-w-fit flex flex-col">
+      <div className="flex flex-row justify-between">
+        <DatasetSelector />
+        <ThemeSwitch />
+      </div>
+      <ModeSwitcher />
     </main>
   )
 }

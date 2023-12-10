@@ -6,13 +6,15 @@ import { Clustering } from '@/components/charts/Clustering'
 import { LinearRegression } from '@/components/charts/LinearRegression'
 import { LineChart } from '@/components/charts/LineChart'
 import { PieChart } from '@/components/charts/PieChart'
+import { DatasetTable } from '@/components/datatable/DataTable'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import React from 'react'
 
 export function ModeSwitcher() {
   return (
-    <Tabs defaultValue="line-chart" className="w-full">
+    <Tabs defaultValue="datatable" className="min-w-fit">
       <TabsList className="flex justify-center my-4">
+        <TabsTrigger value="datatable">Datatable</TabsTrigger>
         <TabsTrigger value="line-chart">Line Chart</TabsTrigger>
         <TabsTrigger value="area-chart">Area Chart</TabsTrigger>
         <TabsTrigger value="bar-chart">Bar Chart</TabsTrigger>
@@ -23,6 +25,9 @@ export function ModeSwitcher() {
         <TabsTrigger value="regression">Regression</TabsTrigger>
       </TabsList>
 
+      <TabsContent value="datatable">
+        <DatasetTable />
+      </TabsContent>
       <TabsContent value="line-chart">
         <LineChart />
       </TabsContent>

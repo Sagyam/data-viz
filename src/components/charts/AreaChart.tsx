@@ -1,3 +1,5 @@
+'use client'
+
 import EChartsWrapper from '@/components/EChartWrapper'
 import { useAreaChartDatasetStore } from '@/stores/area-chart.store'
 import { generateAreaChart } from '@/utils/seeder/areachart'

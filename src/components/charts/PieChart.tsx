@@ -1,3 +1,5 @@
+'use client'
+
 import EChartsWrapper from '@/components/EChartWrapper'
 import { usePieChartDatasetStore } from '@/stores/pie-chart.store'
 import { generatePieChartDataset } from '@/utils/seeder/piechart'

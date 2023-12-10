@@ -1,14 +1,8 @@
 'use client'
 
-import { AreYouSure } from '@/components/AreYouSure'
-import { TooltipWrapper } from '@/components/TooltipWrapper'
+import { AddMoreDialog } from '@/components/AddMore'
+import { columns } from '@/components/datatable/Column'
 import { Button } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import {
   Table,
@@ -18,12 +12,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { CSVFile } from '@/entities/CSVFile'
 import { getAllFiles } from '@/events/file.events'
 import { useFileStore } from '@/stores/file.store'
-import { getTimeFromNow } from '@/utils/date'
 import {
-  ColumnDef,
   ColumnFiltersState,
   flexRender,
   getCoreRowModel,
@@ -34,70 +25,8 @@ import {
   useReactTable,
   VisibilityState,
 } from '@tanstack/react-table'
-import { ArrowUpDown, ChevronDown } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import React from 'react'
-
-export const columns: ColumnDef<CSVFile>[] = [
-  {
-    accessorKey: 'name',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Name
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div className="capitalize">{row.getValue('name')}</div>,
-  },
-  {
-    accessorKey: 'type',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Dataset Type
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div className="lowercase">{row.getValue('type')}</div>,
-  },
-  {
-    accessorKey: 'createdAt',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Created At
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      return (
-        <TooltipWrapper
-          hoverText={getTimeFromNow(row.getValue('createdAt'))}
-          tooltipText={row.getValue('createdAt')}
-        />
-      )
-    },
-  },
-  {
-    id: 'actions',
-    enableHiding: false,
-    cell: ({ row }) => {
-      return <AreYouSure rowId={row.original.id} />
-    },
-  },
-]
 
 export function DatasetTable() {
   const [sorting, setSorting] = React.useState<SortingState>([])
@@ -106,16 +35,21 @@ export function DatasetTable() {
   )
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
-
   const { files, setFiles } = useFileStore()
+  const [isLoading, setIsLoading] = React.useState<boolean>(false)
+  const [error, setError] = React.useState<Error | null>(null)
 
   React.useEffect(() => {
+    setIsLoading(true)
     getAllFiles()
       .then(files => {
         setFiles(files)
       })
       .catch(error => {
-        console.error(error)
+        setError(error)
+      })
+      .finally(() => {
+        setIsLoading(false)
       })
   }, [])
 
@@ -138,7 +72,7 @@ export function DatasetTable() {
 
   return (
     <div className="w-fit">
-      <div className="flex items-center py-4">
+      <div className="flex items-center justify-between py-4">
         <Input
           placeholder="Filter names..."
           value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
@@ -147,30 +81,7 @@ export function DatasetTable() {
           }
           className="max-w-sm"
         />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter(column => column.getCanHide())
-              .map(column => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={value => column.toggleVisibility(!!value)}
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <AddMoreDialog />
       </div>
       <div className="rounded-md border">
         <Table>
@@ -193,7 +104,8 @@ export function DatasetTable() {
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {!isLoading &&
+              !error &&
               table.getRowModel().rows.map(row => (
                 <TableRow key={row.id}>
                   {row.getVisibleCells().map(cell => (
@@ -205,14 +117,24 @@ export function DatasetTable() {
                     </TableCell>
                   ))}
                 </TableRow>
-              ))
-            ) : (
+              ))}
+            {isLoading && (
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  <Loader2 className="h-8 w-8 animate-spin" />
+                </TableCell>
+              </TableRow>
+            )}
+            {error && (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center text-destructive"
+                >
+                  {error.message}
                 </TableCell>
               </TableRow>
             )}

@@ -15,35 +15,21 @@ import {
 } from '@/components/ui/popover'
 
 import { cn } from '@/lib/utils'
+import { useFileStore } from '@/stores/file.store'
 import { Check, ChevronsUpDown } from 'lucide-react'
 import * as React from 'react'
 
-const dataset = [
-  {
-    value: 'next.js',
-    label: 'Next.js',
-  },
-  {
-    value: 'sveltekit',
-    label: 'SvelteKit',
-  },
-  {
-    value: 'nuxt.js',
-    label: 'Nuxt.js',
-  },
-  {
-    value: 'remix',
-    label: 'Remix',
-  },
-  {
-    value: 'astro',
-    label: 'Astro',
-  },
-]
-
 export function DatasetSelector() {
   const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState('')
+  const { files, selectedFile, setSelectedFile } = useFileStore()
+
+  React.useEffect(() => {
+    console.log(selectedFile)
+  }, [selectedFile])
+
+  if (files.length === 0) {
+    return null
+  }
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -54,33 +40,36 @@ export function DatasetSelector() {
           aria-expanded={open}
           className="w-full justify-between"
         >
-          {value
-            ? dataset.find(dataset => dataset.value === value)?.label
-            : 'Select Dataset'}
+          {selectedFile
+            ? files.find(file => file.name === selectedFile.name)?.name
+            : 'Select Dataset to  Visualize'}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className="w-full p-0">
         <Command>
-          <CommandInput placeholder="Search framework..." />
+          <CommandInput placeholder="Search dataset..." />
           <CommandEmpty>No dataset found.</CommandEmpty>
           <CommandGroup>
-            {dataset.map(dataset => (
+            {files.map(file => (
               <CommandItem
-                key={dataset.value}
-                value={dataset.value}
+                key={file.id}
+                value={file.name}
                 onSelect={currentValue => {
-                  setValue(currentValue === value ? '' : currentValue)
+                  const file = files.find(file => file.name === currentValue)
+                  file && setSelectedFile(file)
                   setOpen(false)
                 }}
               >
                 <Check
                   className={cn(
                     'mr-2 h-4 w-4',
-                    value === dataset.value ? 'opacity-100' : 'opacity-0'
+                    selectedFile?.name === file.name
+                      ? 'opacity-100'
+                      : 'opacity-0'
                   )}
                 />
-                {dataset.label}
+                {file.name}
               </CommandItem>
             ))}
           </CommandGroup>

@@ -1,3 +1,5 @@
+'use client'
+
 import EChartsWrapper from '@/components/EChartWrapper'
 import { useBarchartDatasetStore } from '@/stores/bar-chart.store'
 import { generateBarChartDataset } from '@/utils/seeder/barchart'

@@ -1,3 +1,5 @@
+'use client'
+
 import EChartsWrapper from '@/components/EChartWrapper'
 import { useBoxplotDatasetStore } from '@/stores/box-plot.store'
 import { generateDatasetForBoxPlot } from '@/utils/seeder/boxplot'

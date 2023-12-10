@@ -23,10 +23,15 @@ export async function createFile(
     method: 'POST',
     body: formData,
   })
-  return await response.json()
+  const res = await response.json()
+  if (response.status !== 201) {
+    throw new Error('Failed to upload file')
+  } else {
+    return res
+  }
 }
 
-export async function deleteFile(id: string): Promise<Boolean> {
+export async function deleteFile(id: string): Promise<boolean> {
   const response = await fetch(`http://localhost:8000/files/${id}`, {
     method: 'DELETE',
   })

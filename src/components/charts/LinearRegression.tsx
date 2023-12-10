@@ -1,3 +1,5 @@
+'use client'
+
 import EChartsWrapper from '@/components/EChartWrapper'
 import { useRegressionDatasetStore } from '@/stores/regression.store'
 import { generateRegressionDataset } from '@/utils/seeder/regression'

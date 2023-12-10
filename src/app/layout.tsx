@@ -1,4 +1,5 @@
 import '@/app/globals.css'
+import { Toaster } from '@/components/ui/toaster'
 
 import { cn } from '@/lib/utils'
 import { ThemeProvider } from '@/stores/theme-provider'
@@ -33,6 +34,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           )}
         >
           {children}
+          <Toaster />
         </body>
       </ThemeProvider>
     </html>

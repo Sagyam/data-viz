@@ -1,3 +1,5 @@
+'use client'
+
 import EChartsWrapper from '@/components/EChartWrapper'
 import { LineChartDataset } from '@/entities/linechart.dataset'
 import { useLineChartDatasetStore } from '@/stores/line-chart.store'
