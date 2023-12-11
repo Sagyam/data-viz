@@ -1,9 +1,9 @@
-type twoDCord = [number, number]
+export type twoDCord = [number, number]
 
 export interface ClusteringDataset {
   id: string
   datasetName: string
-  dataItem: twoDCord[]
-  createdAt: string
-  updatedAt: string
+  dataItems: twoDCord[]
+  createdAt: Date
+  updatedAt: Date
 }

@@ -1,9 +1,9 @@
-type DataItem = [number, number, string]
+export type BarchartDataItem = [number, number, string]
 
 export interface BarchartDataset {
   id: string
   datasetName: string
-  dataItem: DataItem[]
-  createdAt: string
-  updatedAt: string
+  dataItems: BarchartDataItem[]
+  createdAt: Date
+  updatedAt: Date
 }

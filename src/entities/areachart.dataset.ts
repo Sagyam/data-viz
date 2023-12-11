@@ -3,6 +3,6 @@ export interface AreaChartDataset {
   datasetName: string
   dateArray: string[]
   dataArray: number[]
-  createdAt: string
-  updatedAt: string
+  createdAt: Date
+  updatedAt: Date
 }

@@ -82,5 +82,5 @@ export const BoxPlot: React.FC = () => {
     ],
   }
 
-  return <EChartsWrapper option={chartOption} style={{ height: '600px' }} />
+  return <EChartsWrapper option={chartOption} />
 }

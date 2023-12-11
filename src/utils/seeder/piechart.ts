@@ -68,9 +68,6 @@ export async function getPieChartDataset(
             dataset.dataItems = dataItems
             resolve(dataset)
           })
-          .catch((error: Error) => {
-            reject(new Error(`Error parsing CSV: ${error.message}`))
-          })
       })
       .catch((error: Error) => {
         reject(new Error(`Error fetching CSV file: ${error.message}`))

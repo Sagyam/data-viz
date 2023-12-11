@@ -2,20 +2,49 @@
 
 import EChartsWrapper from '@/components/EChartWrapper'
 import { useBarchartDatasetStore } from '@/stores/bar-chart.store'
-import { generateBarChartDataset } from '@/utils/seeder/barchart'
+import { useFileStore } from '@/stores/file.store'
+import { getBarChartDataset } from '@/utils/seeder/barchart'
 import * as echarts from 'echarts'
-import React, { useEffect } from 'react'
+import React, { useState } from 'react'
 
 export const BarChart: React.FC = () => {
-  const { barchartDataset, setBarchartDataset } = useBarchartDatasetStore()
+  const { barchartDataset, setBarchartDataset, clearBarchartDataset } =
+    useBarchartDatasetStore()
+  const { selectedFile } = useFileStore()
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    setBarchartDataset(generateBarChartDataset(12))
-  }, [])
+  React.useEffect(() => {
+    setIsLoading(true)
+    const getDataset = async () => {
+      if (!selectedFile) return
+      if (selectedFile?.type !== 'bar-chart') return
 
-  if (!barchartDataset) {
-    return <div>No data</div>
-  }
+      getBarChartDataset(selectedFile)
+        .then(dataset => {
+          setBarchartDataset(dataset)
+        })
+        .catch(err => {
+          setError(err.message)
+        })
+        .finally(() => {
+          setIsLoading(false)
+        })
+    }
+    getDataset()
+    return () => {
+      clearBarchartDataset()
+    }
+  }, [selectedFile])
+
+  if (!selectedFile) return <div>Select a file to visualize</div>
+
+  if (selectedFile?.type !== 'bar-chart')
+    return <div>Selected dataset is not suitable for bar chart</div>
+
+  if (error) return <div>{error}</div>
+
+  if (!barchartDataset) return <div>Dataset is empty</div>
 
   const chartOption: echarts.EChartsOption = {
     title: {
@@ -23,18 +52,20 @@ export const BarChart: React.FC = () => {
       left: 'center',
     },
     dataset: {
-      source: [['score', 'amount', 'product'], ...barchartDataset.dataItem],
+      source: [
+        ['price', 'sales', 'product_name'],
+        ...barchartDataset.dataItems,
+      ],
     },
     grid: { containLabel: true },
-    xAxis: { name: 'amount' },
+    xAxis: { name: 'sales' },
     yAxis: { type: 'category' },
     visualMap: {
       orient: 'horizontal',
       left: 'center',
       min: 10,
       max: 100,
-      text: ['High Score', 'Low Score'],
-      // Map the score column to color
+      text: ['High', 'Low'],
       dimension: 0,
       inRange: {
         color: ['#65B581', '#FFCE34', '#FD665F'],
@@ -44,14 +75,12 @@ export const BarChart: React.FC = () => {
       {
         type: 'bar',
         encode: {
-          // Map the "amount" column to X axis.
-          x: 'amount',
-          // Map the "product" column to Y axis
-          y: 'product',
+          x: 'sales',
+          y: 'product_name',
         },
       },
     ],
   }
 
-  return <EChartsWrapper option={chartOption} style={{ height: '600px' }} />
+  return <EChartsWrapper option={chartOption} isLoading={isLoading} />
 }

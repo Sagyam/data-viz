@@ -2,27 +2,55 @@
 
 import EChartsWrapper from '@/components/EChartWrapper'
 import { useClusteringDatasetStore } from '@/stores/custering.store'
-import { generateClusteringDataset } from '@/utils/seeder/clustering'
+import { useFileStore } from '@/stores/file.store'
+import { getClusteringChartDataset } from '@/utils/seeder/clustering'
 import * as echarts from 'echarts'
 // @ts-ignore
 import { transform } from 'echarts-stat'
-import React, { useEffect } from 'react'
+import React, { useState } from 'react'
 
 export const Clustering: React.FC = () => {
   echarts.registerTransform(transform.clustering)
 
-  const { clusteringDataset, setClusteringDataset } =
+  const { clusteringDataset, setClusteringDataset, clearClusteringDataset } =
     useClusteringDatasetStore()
+  const { selectedFile } = useFileStore()
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    setClusteringDataset(generateClusteringDataset(50))
-  }, [])
+  React.useEffect(() => {
+    setIsLoading(true)
+    const getDataset = async () => {
+      if (!selectedFile) return
+      if (selectedFile?.type !== 'clustering') return
 
-  if (!clusteringDataset) {
-    return <div>No data</div>
-  }
+      getClusteringChartDataset(selectedFile)
+        .then(dataset => {
+          setClusteringDataset(dataset)
+        })
+        .catch(err => {
+          setError(err.message)
+        })
+        .finally(() => {
+          setIsLoading(false)
+        })
+    }
+    getDataset()
+    return () => {
+      clearClusteringDataset()
+    }
+  }, [selectedFile])
 
-  const data = clusteringDataset.dataItem
+  if (!selectedFile) return <div>Select a file to visualize</div>
+
+  if (selectedFile?.type !== 'clustering')
+    return <div>Selected dataset is not suitable for clustering</div>
+
+  if (error) return <div>{error}</div>
+
+  if (!clusteringDataset) return <div>Dataset is empty</div>
+
+  const data = clusteringDataset.dataItems
   const CLUSTER_COUNT = 4
   const DIMENSION_CLUSTER_INDEX = 2
   const COLOR_ALL = [
@@ -88,5 +116,5 @@ export const Clustering: React.FC = () => {
     },
   }
 
-  return <EChartsWrapper option={chartOption} style={{ height: '600px' }} />
+  return <EChartsWrapper option={chartOption} isLoading={isLoading} />
 }

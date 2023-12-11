@@ -81,5 +81,5 @@ export const LineChart: React.FC = () => {
     series: getSeries(lineChartDataset) as any,
   }
 
-  return <EChartsWrapper option={chartOption} style={{ height: '500px' }} />
+  return <EChartsWrapper option={chartOption} />
 }

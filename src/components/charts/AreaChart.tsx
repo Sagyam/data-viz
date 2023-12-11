@@ -2,20 +2,50 @@
 
 import EChartsWrapper from '@/components/EChartWrapper'
 import { useAreaChartDatasetStore } from '@/stores/area-chart.store'
-import { generateAreaChart } from '@/utils/seeder/areachart'
+import { useFileStore } from '@/stores/file.store'
+import { getAreaChartDataset } from '@/utils/seeder/areachart'
 import * as echarts from 'echarts'
-import React, { useEffect } from 'react'
+import React, { useState } from 'react'
 
 export const AreaChart: React.FC = () => {
-  const { areaChartDataset, setAreaChartDataset } = useAreaChartDatasetStore()
+  const { areaChartDataset, setAreaChartDataset, clearAreaChartDataset } =
+    useAreaChartDatasetStore()
+  const { selectedFile } = useFileStore()
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    setAreaChartDataset(generateAreaChart(500))
-  }, [])
+  React.useEffect(() => {
+    setIsLoading(true)
+    const getDataset = async () => {
+      if (!selectedFile) return
+      if (selectedFile?.type !== 'area-chart') return
 
-  if (!areaChartDataset) {
-    return <div>No data</div>
-  }
+      getAreaChartDataset(selectedFile)
+        .then(dataset => {
+          setAreaChartDataset(dataset)
+        })
+        .catch(err => {
+          setError(err.message)
+        })
+        .finally(() => {
+          setIsLoading(false)
+        })
+    }
+    getDataset()
+    return () => {
+      clearAreaChartDataset()
+    }
+  }, [selectedFile])
+
+  if (!selectedFile) return <div>Select a file to visualize</div>
+
+  if (selectedFile?.type !== 'area-chart')
+    return <div>Selected dataset is not suitable for area chart</div>
+
+  if (error) return <div>{error}</div>
+
+  if (areaChartDataset?.dataArray.length === 0)
+    return <div>Dataset is empty</div>
 
   const chartOption: echarts.EChartsOption = {
     showLoading: 'default',
@@ -41,7 +71,7 @@ export const AreaChart: React.FC = () => {
     xAxis: {
       type: 'category',
       boundaryGap: false,
-      data: areaChartDataset.dateArray,
+      data: areaChartDataset?.dateArray,
     },
     yAxis: {
       type: 'value',
@@ -60,7 +90,7 @@ export const AreaChart: React.FC = () => {
     ],
     series: [
       {
-        name: areaChartDataset.datasetName,
+        name: areaChartDataset?.datasetName,
         type: 'line',
         symbol: 'none',
         sampling: 'lttb',
@@ -79,10 +109,10 @@ export const AreaChart: React.FC = () => {
             },
           ]),
         },
-        data: areaChartDataset.dataArray,
+        data: areaChartDataset?.dataArray,
       },
     ],
   }
 
-  return <EChartsWrapper option={chartOption} style={{ height: '400px' }} />
+  return <EChartsWrapper option={chartOption} isLoading={isLoading} />
 }
