@@ -2,20 +2,49 @@
 
 import EChartsWrapper from '@/components/EChartWrapper'
 import { useBoxplotDatasetStore } from '@/stores/box-plot.store'
-import { generateDatasetForBoxPlot } from '@/utils/seeder/boxplot'
+import { useFileStore } from '@/stores/file.store'
+import { getBoxplotDataset } from '@/utils/seeder/boxplot'
 import * as echarts from 'echarts'
-import React, { useEffect } from 'react'
+import React, { useState } from 'react'
 
 export const BoxPlot: React.FC = () => {
-  const { boxplotDataset, setBoxplotDataset } = useBoxplotDatasetStore()
+  const { boxplotDataset, setBoxplotDataset, clearBoxplotDataset } =
+    useBoxplotDatasetStore()
+  const { selectedFile } = useFileStore()
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    setBoxplotDataset(generateDatasetForBoxPlot(5, 8))
-  }, [])
+  React.useEffect(() => {
+    setIsLoading(true)
+    const getDataset = async () => {
+      if (!selectedFile) return
+      if (selectedFile?.type !== 'box-plot') return
 
-  if (boxplotDataset.length === 0) {
-    return <div>No data</div>
-  }
+      getBoxplotDataset(selectedFile)
+        .then(dataset => {
+          setBoxplotDataset(dataset)
+        })
+        .catch(err => {
+          setError(err.message)
+        })
+        .finally(() => {
+          setIsLoading(false)
+        })
+    }
+    getDataset()
+    return () => {
+      clearBoxplotDataset()
+    }
+  }, [selectedFile])
+
+  if (!selectedFile) return <div>Select a file to plot</div>
+
+  if (selectedFile?.type !== 'box-plot')
+    return <div>Selected dataset is not suitable for boxplot</div>
+
+  if (error) return <div>{error}</div>
+
+  if (!boxplotDataset) return <div>Dataset is empty</div>
 
   const chartOption: echarts.EChartsOption = {
     title: [
@@ -26,12 +55,12 @@ export const BoxPlot: React.FC = () => {
     ],
     dataset: [
       {
-        source: boxplotDataset.map(dataset => dataset.data),
+        source: boxplotDataset.table,
       },
       {
         transform: {
           type: 'boxplot',
-          config: { itemNameFormatter: 'Dataset {value}' },
+          config: { itemNameFormatter: 'expr {value}' },
         },
       },
       {
@@ -82,5 +111,5 @@ export const BoxPlot: React.FC = () => {
     ],
   }
 
-  return <EChartsWrapper option={chartOption} />
+  return <EChartsWrapper option={chartOption} isLoading={isLoading} />
 }

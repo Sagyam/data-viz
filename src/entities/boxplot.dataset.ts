@@ -1,7 +1,7 @@
 export interface BoxplotDataset {
   id: string
   datasetName: string
-  data: number[]
-  createdAt: string
-  updatedAt: string
+  table: number[][]
+  createdAt: Date
+  updatedAt: Date
 }
