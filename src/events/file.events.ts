@@ -6,7 +6,7 @@ import {
 } from '@/entities/CSVFile'
 
 export async function getAllFiles(): Promise<CSVFile[]> {
-  const response = await fetch(`http://localhost:8000/files`)
+  const response = await fetch(`https://pear-grasshopper-belt.cyclic.app/files`)
   const dto: FilesResponseDto = await response.json()
   return dto.dataItems
 }
@@ -19,10 +19,13 @@ export async function createFile(
   formData.append('name', name)
   formData.append('type', type)
   formData.append('file', file)
-  const response = await fetch(`http://localhost:8000/files`, {
-    method: 'POST',
-    body: formData,
-  })
+  const response = await fetch(
+    `https://pear-grasshopper-belt.cyclic.app/files`,
+    {
+      method: 'POST',
+      body: formData,
+    }
+  )
   const res = await response.json()
   if (response.status !== 201) {
     throw new Error('Failed to upload file')
@@ -32,9 +35,12 @@ export async function createFile(
 }
 
 export async function deleteFile(id: string): Promise<boolean> {
-  const response = await fetch(`http://localhost:8000/files/${id}`, {
-    method: 'DELETE',
-  })
+  const response = await fetch(
+    `https://pear-grasshopper-belt.cyclic.app/files/${id}`,
+    {
+      method: 'DELETE',
+    }
+  )
   const data = await response.json()
   return !!data
 }
