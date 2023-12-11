@@ -1,28 +1,56 @@
 'use client'
 
 import EChartsWrapper from '@/components/EChartWrapper'
+import { useFileStore } from '@/stores/file.store'
 import { useRegressionDatasetStore } from '@/stores/regression.store'
-import { generateRegressionDataset } from '@/utils/seeder/regression'
+import { getRegressionChartDataset } from '@/utils/seeder/regression'
 import * as echarts from 'echarts'
 // @ts-ignore
 import { transform } from 'echarts-stat'
-import React, { useEffect } from 'react'
+import React, { useState } from 'react'
 
 export const LinearRegression: React.FC = () => {
   echarts.registerTransform(transform.regression)
 
-  const { regressionDataset, setRegressionDataset } =
+  const { regressionDataset, setRegressionDataset, clearRegressionDataset } =
     useRegressionDatasetStore()
+  const { selectedFile } = useFileStore()
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    setRegressionDataset(generateRegressionDataset(20))
-  }, [])
+  React.useEffect(() => {
+    setIsLoading(true)
+    const getDataset = async () => {
+      if (!selectedFile) return
+      if (selectedFile?.type !== 'regression') return
 
-  if (!regressionDataset) {
-    return <div>No data</div>
-  }
+      getRegressionChartDataset(selectedFile)
+        .then(dataset => {
+          setRegressionDataset(dataset)
+        })
+        .catch(err => {
+          setError(err.message)
+        })
+        .finally(() => {
+          setIsLoading(false)
+        })
+    }
+    getDataset()
+    return () => {
+      clearRegressionDataset()
+    }
+  }, [selectedFile])
 
-  const data = regressionDataset.dataItem
+  if (!selectedFile) return <div>Select a file to plot</div>
+
+  if (selectedFile?.type !== 'regression')
+    return <div>Selected dataset is not suitable for regression</div>
+
+  if (error) return <div>{error}</div>
+
+  if (!regressionDataset) return <div>Dataset is empty</div>
+
+  const data = regressionDataset.dataItems
 
   const chartOption: echarts.EChartsOption = {
     dataset: [
@@ -82,5 +110,5 @@ export const LinearRegression: React.FC = () => {
     ],
   }
 
-  return <EChartsWrapper option={chartOption} />
+  return <EChartsWrapper option={chartOption} isLoading={isLoading} />
 }
