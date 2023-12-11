@@ -23,12 +23,12 @@ export function DatasetSelector() {
   const [open, setOpen] = React.useState(false)
   const { files, selectedFile, setSelectedFile } = useFileStore()
 
-  React.useEffect(() => {
-    console.log(selectedFile)
-  }, [selectedFile])
-
-  if (files.length === 0) {
-    return null
+  const handleSelectionChange = (currentValue: string) => {
+    const selectedFile = files.find(file => file.id === currentValue)
+    if (selectedFile) {
+      setSelectedFile(selectedFile)
+      setOpen(false)
+    }
   }
 
   return (
@@ -51,27 +51,24 @@ export function DatasetSelector() {
           <CommandInput placeholder="Search dataset..." />
           <CommandEmpty>No dataset found.</CommandEmpty>
           <CommandGroup>
-            {files.map(file => (
-              <CommandItem
-                key={file.id}
-                value={file.name}
-                onSelect={currentValue => {
-                  const file = files.find(file => file.name === currentValue)
-                  file && setSelectedFile(file)
-                  setOpen(false)
-                }}
-              >
-                <Check
-                  className={cn(
-                    'mr-2 h-4 w-4',
-                    selectedFile?.name === file.name
-                      ? 'opacity-100'
-                      : 'opacity-0'
-                  )}
-                />
-                {file.name}
-              </CommandItem>
-            ))}
+            {files.length > 0 &&
+              files.map(file => (
+                <CommandItem
+                  key={file.id}
+                  value={file.id}
+                  onSelect={currentValue => handleSelectionChange(currentValue)}
+                >
+                  <Check
+                    className={cn(
+                      'mr-2 h-4 w-4',
+                      selectedFile?.name === file.name
+                        ? 'opacity-100'
+                        : 'opacity-0'
+                    )}
+                  />
+                  {file.name} - {file.type}
+                </CommandItem>
+              ))}
           </CommandGroup>
         </Command>
       </PopoverContent>

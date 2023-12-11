@@ -1,25 +1,55 @@
 'use client'
 
 import EChartsWrapper from '@/components/EChartWrapper'
+import { useFileStore } from '@/stores/file.store'
 import { usePieChartDatasetStore } from '@/stores/pie-chart.store'
-import { generatePieChartDataset } from '@/utils/seeder/piechart'
+import { getPieChartDataset } from '@/utils/seeder/piechart'
 import * as echarts from 'echarts'
-import React, { useEffect } from 'react'
+import React, { useState } from 'react'
 
 export const PieChart: React.FC = () => {
-  const { pieChartDataset, setPieChartDataset } = usePieChartDatasetStore()
+  const { pieChartDataset, setPieChartDataset, clearPieChartDataset } =
+    usePieChartDatasetStore()
+  const { selectedFile } = useFileStore()
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    setPieChartDataset(generatePieChartDataset(1, 5))
-  }, [])
+  React.useEffect(() => {
+    setIsLoading(true)
+    const getDataset = async () => {
+      if (!selectedFile) return
+      if (selectedFile?.type !== 'pie-chart') return
 
-  if (!pieChartDataset) {
-    return null
-  }
+      getPieChartDataset(selectedFile)
+        .then(dataset => {
+          setPieChartDataset(dataset)
+        })
+        .catch(err => {
+          setError(err.message)
+        })
+        .finally(() => {
+          setIsLoading(false)
+        })
+    }
+    getDataset()
+    return () => {
+      clearPieChartDataset()
+    }
+  }, [selectedFile])
+
+  if (!selectedFile) return <div>Select a file to visualize</div>
+
+  if (selectedFile?.type !== 'pie-chart')
+    return <div>Selected dataset is not suitable for pie chart</div>
+
+  if (error) return <div>{error}</div>
+
+  if (pieChartDataset?.dataItems.length === 0)
+    return <div>Dataset is empty</div>
 
   const chartOption: echarts.EChartsOption = {
     title: {
-      text: `${pieChartDataset.datasetName} Pie Chart`,
+      text: `${pieChartDataset?.datasetName} Pie Chart`,
       left: 'center',
     },
     legend: {
@@ -36,18 +66,18 @@ export const PieChart: React.FC = () => {
     },
     series: [
       {
-        name: 'Nightingale Chart',
+        name: 'Dataset',
         type: 'pie',
         radius: [50, 250],
         center: ['50%', '50%'],
-        roseType: 'area',
+        roseType: 'radius',
         itemStyle: {
           borderRadius: 8,
         },
-        data: pieChartDataset.dataItem,
+        data: pieChartDataset?.dataItems,
       },
     ],
   }
 
-  return <EChartsWrapper option={chartOption} style={{ height: '600px' }} />
+  return <EChartsWrapper option={chartOption} isLoading={isLoading} />
 }

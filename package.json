@@ -29,6 +29,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "cmdk": "^0.2.0",
+    "csvtojson": "^2.0.10",
     "echarts": "^5.4.3",
     "echarts-stat": "^1.2.0",
     "lucide-react": "^0.294.0",

@@ -12,7 +12,7 @@ import React from 'react'
 
 export function ModeSwitcher() {
   return (
-    <Tabs defaultValue="datatable" className="min-w-fit">
+    <Tabs defaultValue="datatable">
       <TabsList className="flex justify-center my-4">
         <TabsTrigger value="datatable">Datatable</TabsTrigger>
         <TabsTrigger value="line-chart">Line Chart</TabsTrigger>

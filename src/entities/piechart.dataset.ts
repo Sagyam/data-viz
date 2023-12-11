@@ -6,7 +6,7 @@ export interface PieChartDataItem {
 export interface PieChartDataset {
   id: string
   datasetName: string
-  dataItem: PieChartDataItem[]
-  createdAt: string
-  updatedAt: string
+  dataItems: PieChartDataItem[]
+  createdAt: Date
+  updatedAt: Date
 }

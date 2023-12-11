@@ -5,7 +5,7 @@ import React from 'react'
 
 const HomePage: React.FC = () => {
   return (
-    <main className="max-w-fit flex flex-col">
+    <main className="flex flex-col">
       <div className="flex flex-row justify-between">
         <DatasetSelector />
         <ThemeSwitch />
