@@ -3,33 +3,22 @@ import { CSVFile } from '@/entities/CSVFile'
 import { faker } from '@faker-js/faker'
 import csv from 'csvtojson'
 
-export function generateDatasetForBoxPlot(
-  numDatasets: number,
-  arraySize: number
-): BoxplotDataset[] {
-  const datasets: BoxplotDataset[] = []
-
-  for (let i = 0; i < numDatasets; i++) {
-    const table: number[][] = []
-
-    for (let j = 0; j < arraySize; j++) {
-      const row: number[] = []
-      for (let k = 0; k < arraySize; k++) {
-        row.push(faker.number.int({ min: 0, max: 100 }))
-      }
-      table.push(row)
+export function generateDatasetForBoxPlot(arraySize: number): BoxplotDataset {
+  const table: number[][] = []
+  for (let j = 0; j < arraySize; j++) {
+    const row: number[] = []
+    for (let k = 0; k < arraySize; k++) {
+      row.push(faker.number.int({ min: 0, max: 100 }))
     }
-
-    const dataset: BoxplotDataset = {
-      id: faker.string.uuid(),
-      datasetName: `Dataset ${i + 1}`,
-      table: table,
-      createdAt: faker.date.past(),
-      updatedAt: faker.date.recent(),
-    }
-    datasets.push(dataset)
+    table.push(row)
   }
-  return datasets
+  return {
+    id: faker.string.uuid(),
+    datasetName: `Dataset`,
+    table: table,
+    createdAt: faker.date.past(),
+    updatedAt: faker.date.recent(),
+  }
 }
 
 export async function getBoxplotDataset(

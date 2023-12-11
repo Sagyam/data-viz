@@ -58,7 +58,7 @@ const EChartsWrapper: React.FC<EChartsWrapperProps> = ({
       className={className}
       style={{
         height: '80vh',
-        width: '80vw',
+        width: '100%',
       }}
     />
   )

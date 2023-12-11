@@ -3,7 +3,10 @@
 import EChartsWrapper from '@/components/EChartWrapper'
 import { useBarchartDatasetStore } from '@/stores/bar-chart.store'
 import { useFileStore } from '@/stores/file.store'
-import { getBarChartDataset } from '@/utils/seeder/barchart'
+import {
+  generateBarChartDataset,
+  getBarChartDataset,
+} from '@/utils/seeder/barchart'
 import * as echarts from 'echarts'
 import React, { useState } from 'react'
 
@@ -17,19 +20,21 @@ export const BarChart: React.FC = () => {
   React.useEffect(() => {
     setIsLoading(true)
     const getDataset = async () => {
-      if (!selectedFile) return
-      if (selectedFile?.type !== 'bar-chart') return
-
-      getBarChartDataset(selectedFile)
-        .then(dataset => {
-          setBarchartDataset(dataset)
-        })
-        .catch(err => {
-          setError(err.message)
-        })
-        .finally(() => {
-          setIsLoading(false)
-        })
+      if (selectedFile && selectedFile.type === 'bar-chart') {
+        getBarChartDataset(selectedFile)
+          .then(dataset => {
+            setBarchartDataset(dataset)
+          })
+          .catch(err => {
+            setError(err.message)
+          })
+          .finally(() => {
+            setIsLoading(false)
+          })
+      } else {
+        setBarchartDataset(generateBarChartDataset(12))
+        setIsLoading(false)
+      }
     }
     getDataset()
     return () => {
@@ -37,14 +42,14 @@ export const BarChart: React.FC = () => {
     }
   }, [selectedFile])
 
-  if (!selectedFile) return <div>Select a file to visualize</div>
-
-  if (selectedFile?.type !== 'bar-chart')
-    return <div>Selected dataset is not suitable for bar chart</div>
-
-  if (error) return <div>{error}</div>
+  // if (!selectedFile) return <div>Select a file to visualize</div>
+  //
+  // if (selectedFile?.type !== 'bar-chart')
+  //   return <div>Selected dataset is not suitable for bar chart</div>
 
   if (!barchartDataset) return <div>Dataset is empty</div>
+
+  if (error) return <div>{error}</div>
 
   const chartOption: echarts.EChartsOption = {
     title: {

@@ -3,7 +3,10 @@
 import EChartsWrapper from '@/components/EChartWrapper'
 import { useFileStore } from '@/stores/file.store'
 import { useRegressionDatasetStore } from '@/stores/regression.store'
-import { getRegressionChartDataset } from '@/utils/seeder/regression'
+import {
+  generateRegressionDataset,
+  getRegressionChartDataset,
+} from '@/utils/seeder/regression'
 import * as echarts from 'echarts'
 // @ts-ignore
 import { transform } from 'echarts-stat'
@@ -21,19 +24,21 @@ export const LinearRegression: React.FC = () => {
   React.useEffect(() => {
     setIsLoading(true)
     const getDataset = async () => {
-      if (!selectedFile) return
-      if (selectedFile?.type !== 'regression') return
-
-      getRegressionChartDataset(selectedFile)
-        .then(dataset => {
-          setRegressionDataset(dataset)
-        })
-        .catch(err => {
-          setError(err.message)
-        })
-        .finally(() => {
-          setIsLoading(false)
-        })
+      if (selectedFile && selectedFile.type === 'regression') {
+        getRegressionChartDataset(selectedFile)
+          .then(dataset => {
+            setRegressionDataset(dataset)
+          })
+          .catch(err => {
+            setError(err.message)
+          })
+          .finally(() => {
+            setIsLoading(false)
+          })
+      } else {
+        setRegressionDataset(generateRegressionDataset(20))
+        setIsLoading(false)
+      }
     }
     getDataset()
     return () => {
@@ -41,13 +46,11 @@ export const LinearRegression: React.FC = () => {
     }
   }, [selectedFile])
 
-  if (!selectedFile) return <div>Select a file to plot</div>
-
-  if (selectedFile?.type !== 'regression')
-    return <div>Selected dataset is not suitable for regression</div>
+  // if (!selectedFile) return <div>Select a file to plot</div>
+  // if (selectedFile?.type !== 'regression')
+  //   return <div>Selected dataset is not suitable for regression</div>
 
   if (error) return <div>{error}</div>
-
   if (!regressionDataset) return <div>Dataset is empty</div>
 
   const data = regressionDataset.dataItems

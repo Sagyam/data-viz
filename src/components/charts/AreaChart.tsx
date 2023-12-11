@@ -3,7 +3,10 @@
 import EChartsWrapper from '@/components/EChartWrapper'
 import { useAreaChartDatasetStore } from '@/stores/area-chart.store'
 import { useFileStore } from '@/stores/file.store'
-import { getAreaChartDataset } from '@/utils/seeder/areachart'
+import {
+  generateAreaChart,
+  getAreaChartDataset,
+} from '@/utils/seeder/areachart'
 import * as echarts from 'echarts'
 import React, { useState } from 'react'
 
@@ -17,19 +20,21 @@ export const AreaChart: React.FC = () => {
   React.useEffect(() => {
     setIsLoading(true)
     const getDataset = async () => {
-      if (!selectedFile) return
-      if (selectedFile?.type !== 'area-chart') return
-
-      getAreaChartDataset(selectedFile)
-        .then(dataset => {
-          setAreaChartDataset(dataset)
-        })
-        .catch(err => {
-          setError(err.message)
-        })
-        .finally(() => {
-          setIsLoading(false)
-        })
+      if (selectedFile && selectedFile.type === 'area-chart') {
+        getAreaChartDataset(selectedFile)
+          .then(dataset => {
+            setAreaChartDataset(dataset)
+          })
+          .catch(err => {
+            setError(err.message)
+          })
+          .finally(() => {
+            setIsLoading(false)
+          })
+      } else {
+        setAreaChartDataset(generateAreaChart(100))
+        setIsLoading(false)
+      }
     }
     getDataset()
     return () => {
@@ -37,10 +42,9 @@ export const AreaChart: React.FC = () => {
     }
   }, [selectedFile])
 
-  if (!selectedFile) return <div>Select a file to visualize</div>
-
-  if (selectedFile?.type !== 'area-chart')
-    return <div>Selected dataset is not suitable for area chart</div>
+  // if (!selectedFile) return <div>Select a file to visualize</div>
+  // if (selectedFile?.type !== 'area-chart')
+  //   return <div>Selected dataset is not suitable for area chart</div>
 
   if (error) return <div>{error}</div>
 

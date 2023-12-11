@@ -3,7 +3,10 @@
 import EChartsWrapper from '@/components/EChartWrapper'
 import { useFileStore } from '@/stores/file.store'
 import { usePieChartDatasetStore } from '@/stores/pie-chart.store'
-import { getPieChartDataset } from '@/utils/seeder/piechart'
+import {
+  generatePieChartDataset,
+  getPieChartDataset,
+} from '@/utils/seeder/piechart'
 import * as echarts from 'echarts'
 import React, { useState } from 'react'
 
@@ -17,30 +20,32 @@ export const PieChart: React.FC = () => {
   React.useEffect(() => {
     setIsLoading(true)
     const getDataset = async () => {
-      if (!selectedFile) return
-      if (selectedFile?.type !== 'pie-chart') return
-
-      getPieChartDataset(selectedFile)
-        .then(dataset => {
-          setPieChartDataset(dataset)
-        })
-        .catch(err => {
-          setError(err.message)
-        })
-        .finally(() => {
-          setIsLoading(false)
-        })
+      if (selectedFile && selectedFile.type === 'pie-chart') {
+        getPieChartDataset(selectedFile)
+          .then(dataset => {
+            setPieChartDataset(dataset)
+          })
+          .catch(err => {
+            setError(err.message)
+          })
+          .finally(() => {
+            setIsLoading(false)
+          })
+      } else {
+        setPieChartDataset(generatePieChartDataset(5))
+        setIsLoading(false)
+      }
     }
+
     getDataset()
     return () => {
       clearPieChartDataset()
     }
   }, [selectedFile])
 
-  if (!selectedFile) return <div>Select a file to visualize</div>
-
-  if (selectedFile?.type !== 'pie-chart')
-    return <div>Selected dataset is not suitable for pie chart</div>
+  // if (!selectedFile) return <div>Select a file to visualize</div>
+  // if (selectedFile?.type !== 'pie-chart')
+  //   return <div>Selected dataset is not suitable for pie chart</div>
 
   if (error) return <div>{error}</div>
 

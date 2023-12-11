@@ -3,7 +3,10 @@
 import EChartsWrapper from '@/components/EChartWrapper'
 import { useBoxplotDatasetStore } from '@/stores/box-plot.store'
 import { useFileStore } from '@/stores/file.store'
-import { getBoxplotDataset } from '@/utils/seeder/boxplot'
+import {
+  generateDatasetForBoxPlot,
+  getBoxplotDataset,
+} from '@/utils/seeder/boxplot'
 import * as echarts from 'echarts'
 import React, { useState } from 'react'
 
@@ -17,19 +20,21 @@ export const BoxPlot: React.FC = () => {
   React.useEffect(() => {
     setIsLoading(true)
     const getDataset = async () => {
-      if (!selectedFile) return
-      if (selectedFile?.type !== 'box-plot') return
-
-      getBoxplotDataset(selectedFile)
-        .then(dataset => {
-          setBoxplotDataset(dataset)
-        })
-        .catch(err => {
-          setError(err.message)
-        })
-        .finally(() => {
-          setIsLoading(false)
-        })
+      if (selectedFile && selectedFile.type === 'box-plot') {
+        getBoxplotDataset(selectedFile)
+          .then(dataset => {
+            setBoxplotDataset(dataset)
+          })
+          .catch(err => {
+            setError(err.message)
+          })
+          .finally(() => {
+            setIsLoading(false)
+          })
+      } else {
+        setBoxplotDataset(generateDatasetForBoxPlot(8))
+        setIsLoading(false)
+      }
     }
     getDataset()
     return () => {
@@ -37,10 +42,9 @@ export const BoxPlot: React.FC = () => {
     }
   }, [selectedFile])
 
-  if (!selectedFile) return <div>Select a file to plot</div>
-
-  if (selectedFile?.type !== 'box-plot')
-    return <div>Selected dataset is not suitable for boxplot</div>
+  // if (!selectedFile) return <div>Select a file to plot</div>
+  // if (selectedFile?.type !== 'box-plot')
+  //   return <div>Selected dataset is not suitable for boxplot</div>
 
   if (error) return <div>{error}</div>
 

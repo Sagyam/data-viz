@@ -15,14 +15,14 @@ export function ModeSwitcher() {
     <Tabs defaultValue="datatable">
       <TabsList className="flex justify-center my-4">
         <TabsTrigger value="datatable">Datatable</TabsTrigger>
-        <TabsTrigger value="line-chart">Line Chart</TabsTrigger>
         <TabsTrigger value="area-chart">Area Chart</TabsTrigger>
         <TabsTrigger value="bar-chart">Bar Chart</TabsTrigger>
-        <TabsTrigger value={'bar-chart-stacked'}>Bar Chart Stacked</TabsTrigger>
         <TabsTrigger value="pie-chart">Pie Chart</TabsTrigger>
         <TabsTrigger value="box-plot">Box Plot</TabsTrigger>
         <TabsTrigger value="clustering">Clustering</TabsTrigger>
         <TabsTrigger value="regression">Regression</TabsTrigger>
+        <TabsTrigger value={'bar-chart-stacked'}>Bar Chart Stacked</TabsTrigger>
+        <TabsTrigger value="line-chart">Line Chart</TabsTrigger>
       </TabsList>
 
       <TabsContent value="datatable">

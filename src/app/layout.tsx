@@ -29,7 +29,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       >
         <body
           className={cn(
-            'bg-background font-sans antialiased',
+            'flex justify-center bg-background font-sans antialiased',
             fontSans.variable
           )}
         >

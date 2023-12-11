@@ -3,7 +3,10 @@
 import EChartsWrapper from '@/components/EChartWrapper'
 import { useClusteringDatasetStore } from '@/stores/custering.store'
 import { useFileStore } from '@/stores/file.store'
-import { getClusteringChartDataset } from '@/utils/seeder/clustering'
+import {
+  generateClusteringDataset,
+  getClusteringChartDataset,
+} from '@/utils/seeder/clustering'
 import * as echarts from 'echarts'
 // @ts-ignore
 import { transform } from 'echarts-stat'
@@ -21,19 +24,21 @@ export const Clustering: React.FC = () => {
   React.useEffect(() => {
     setIsLoading(true)
     const getDataset = async () => {
-      if (!selectedFile) return
-      if (selectedFile?.type !== 'clustering') return
-
-      getClusteringChartDataset(selectedFile)
-        .then(dataset => {
-          setClusteringDataset(dataset)
-        })
-        .catch(err => {
-          setError(err.message)
-        })
-        .finally(() => {
-          setIsLoading(false)
-        })
+      if (selectedFile && selectedFile.type === 'clustering') {
+        getClusteringChartDataset(selectedFile)
+          .then(dataset => {
+            setClusteringDataset(dataset)
+          })
+          .catch(err => {
+            setError(err.message)
+          })
+          .finally(() => {
+            setIsLoading(false)
+          })
+      } else {
+        setIsLoading(false)
+        setClusteringDataset(generateClusteringDataset(100))
+      }
     }
     getDataset()
     return () => {
@@ -41,10 +46,9 @@ export const Clustering: React.FC = () => {
     }
   }, [selectedFile])
 
-  if (!selectedFile) return <div>Select a file to visualize</div>
-
-  if (selectedFile?.type !== 'clustering')
-    return <div>Selected dataset is not suitable for clustering</div>
+  // if (!selectedFile) return <div>Select a file to visualize</div>
+  // if (selectedFile?.type !== 'clustering')
+  //   return <div>Selected dataset is not suitable for clustering</div>
 
   if (error) return <div>{error}</div>
 

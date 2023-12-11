@@ -4,31 +4,22 @@ import { faker } from '@faker-js/faker'
 
 import csv from 'csvtojson'
 
-export function generatePieChartDataset(
-  numDatasets: number,
-  arraySize: number
-): PieChartDataset[] {
-  const datasets: PieChartDataset[] = []
+export function generatePieChartDataset(arraySize: number): PieChartDataset {
+  const dataItems: PieChartDataItem[] = Array.from(
+    { length: arraySize },
+    () => ({
+      value: faker.number.int({ min: 0, max: 100 }),
+      name: faker.word.noun(1),
+    })
+  )
 
-  for (let i = 0; i < numDatasets; i++) {
-    const dataItems: PieChartDataItem[] = Array.from(
-      { length: arraySize },
-      () => ({
-        value: faker.number.int({ min: 0, max: 100 }),
-        name: faker.word.noun(1),
-      })
-    )
-
-    const dataset: PieChartDataset = {
-      id: faker.string.uuid(),
-      datasetName: `Dataset ${i + 1}`,
-      dataItems,
-      createdAt: faker.date.past(),
-      updatedAt: faker.date.recent(),
-    }
-    datasets.push(dataset)
+  return {
+    id: faker.string.uuid(),
+    datasetName: `Dataset`,
+    dataItems,
+    createdAt: faker.date.past(),
+    updatedAt: faker.date.recent(),
   }
-  return datasets
 }
 
 export async function getPieChartDataset(
