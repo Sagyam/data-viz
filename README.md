@@ -1,10 +1,3 @@
-## Getting Started
-
-## Live Demo
-[Live App](https://data-viz-sagyam.vercel.app)
-
-[Backend Codebase](https://github.com/Sagyam/data-viz-api)
-
 ## Feautures
 - [x] CRUD Table for datasets
 - [x] Responsive Table and Chart
